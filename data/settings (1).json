@@ -1,0 +1,72 @@
+{
+  "_note": "Manual inputs: no free daily feed. Update by hand and change the as_of dates.",
+  "pool": {
+    "balance": 100000000,
+    "coupon": 0.055,
+    "wac": 0.06443,
+    "original_term": 360,
+    "wala": 26,
+    "as_of": "Oct 2026 factor month",
+    "source": "Santander US Capital Markets prepayment report, Nov 2026 (FNMA 30-yr 5.5s)"
+  },
+  "spread": {
+    "value": 0.0125,
+    "as_of": "2026-09-30",
+    "source": "Morgan Stanley IM Agency MBS Monitor Q3 2026 (assumed unchanged)"
+  },
+  "prepay": {
+    "base_cpr": 0.057,
+    "peak_cpr": 0.32,
+    "midpoint": 0.0072,
+    "steepness": 215,
+    "source": "Base: FNMA 5.0s Oct 2026 CPR; peak: FNCL 6.5s Dec 2025; midpoint/steepness fit to Oct 2026 speeds"
+  },
+  "calibration": {
+    "reference_mortgage_rate": 0.071,
+    "as_of": "Oct 2026 factor month",
+    "source": "Santander US Capital Markets prepayment report, Nov 2026 (FNMA 30-yr)",
+    "note": "Reference rate approximates PMMS in Sept–Oct 2026 (speeds lag rates ~1 month)",
+    "points": [
+      {
+        "coupon": "2.0",
+        "wac": 0.02875,
+        "cpr": 0.041
+      },
+      {
+        "coupon": "4.0",
+        "wac": 0.04673,
+        "cpr": 0.062
+      },
+      {
+        "coupon": "5.0",
+        "wac": 0.05935,
+        "cpr": 0.057
+      },
+      {
+        "coupon": "5.5",
+        "wac": 0.06443,
+        "cpr": 0.07
+      },
+      {
+        "coupon": "6.0",
+        "wac": 0.06881,
+        "cpr": 0.088
+      },
+      {
+        "coupon": "6.5",
+        "wac": 0.07331,
+        "cpr": 0.127
+      },
+      {
+        "coupon": "7.0",
+        "wac": 0.07758,
+        "cpr": 0.176
+      },
+      {
+        "coupon": "≥7.5",
+        "wac": 0.08369,
+        "cpr": 0.199
+      }
+    ]
+  }
+}
