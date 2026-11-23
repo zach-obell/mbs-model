@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agency MBS Prepayment & Convexity Model</title>
+<meta name="description" content="Interactive model of a Fannie Mae 30-year 5.5% MBS pool: prepayments, price, duration and negative convexity, with market data updated automatically.">
+<style>
+  :root {
+    color-scheme: light;
+    --page: #ffffff; --surface: #ffffff; --card-border: #e4e7ec;
+    --text: #101828; --text-2: #475467; --muted: #667085;
+    --grid: #eaecf0; --axis: #d0d5dd; --accent: #1f3864;
+    --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--text);
+         font: 15px/1.5 Arial, "Helvetica Neue", Helvetica, sans-serif;
+         font-feature-settings: "tnum" 1; -webkit-font-smoothing: antialiased; }
+  h1, h2 { color: var(--accent); }
+  header.top { border-bottom: 3px solid var(--accent); padding-bottom: 14px; }
+  h1 { font-weight: 700; } h2 { font-weight: 600; }
+  .tile .val, .hist-latest .val { font-weight: 600; letter-spacing: -0.01em; }
+  .card, .tile { box-shadow: 0 1px 2px rgba(16,24,40,0.04); }
+  main { max-width: 1080px; margin: 0 auto; padding: 36px 20px 64px; }
+  header.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; }
+  header.top a.gh { font-size: 13px; white-space: nowrap; text-decoration: none; border: 1px solid var(--card-border); border-radius: 6px; padding: 5px 10px; color: var(--text-2); }
+  h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 19px; margin: 0 0 4px; }
+  h3 { font-size: 15px; margin: 18px 0 6px; }
+  .sub { color: var(--text-2); margin: 0 0 6px; }
+  .asof { color: var(--muted); font-size: 13px; margin: 0; }
+  .card { background: var(--surface); border: 1px solid var(--card-border); border-radius: 4px; padding: 18px 20px; margin-bottom: 18px; }
+  .card p.cap { color: var(--muted); font-size: 13px; margin: 0 0 10px; }
+  .tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 18px; }
+  .tile { min-width: 0; background: var(--surface); border: 1px solid var(--card-border); border-radius: 4px; padding: 12px 14px; }
+  .tile .lbl { color: var(--text-2); font-size: 12.5px; }
+  .tile .val { font-size: 26px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .tile .note { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tile.hero .val { color: var(--accent); }
+  .groups { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .groups h3 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+  .controls { display: grid; gap: 14px; }
+  .switch { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--text-2); }
+  .bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .bar h2 { margin: 0; }
+  .ctl label { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--text-2); }
+  .ctl label b { color: var(--text); font-variant-numeric: tabular-nums; }
+  .ctl input[type=range] { width: 100%; accent-color: var(--s1); }
+  .ctl .hint { color: var(--muted); font-size: 12px; }
+  .row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+  button { font: inherit; font-size: 13.5px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--card-border); background: #f9fafb; color: var(--text); cursor: pointer; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 18px; }
+  .grid2 .card { margin-bottom: 0; }
+  .chart { position: relative; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--text-2); margin-bottom: 6px; }
+  .legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+  .legend i.dot { width: 9px; height: 9px; border-radius: 50%; }
+  .tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--card-border); border-radius: 6px; padding: 6px 9px; font-size: 12.5px; box-shadow: 0 2px 8px rgba(0,0,0,.15); white-space: nowrap; display: none; z-index: 2; }
+  .tip .h { color: var(--text-2); margin-bottom: 2px; }
+  .tip span.sw { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  th { color: var(--text-2); font-weight: 600; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tag { font-size: 11.5px; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--card-border); color: var(--text-2); white-space: nowrap; }
+  ul { padding-left: 20px; margin: 6px 0; }
+  li { margin: 3px 0; }
+  details summary { cursor: pointer; font-weight: 600; font-size: 15px; list-style: none; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after { content: ' +'; color: var(--muted); }
+  details[open] summary::after { content: ' −'; }
+  .hist-latest { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 10px 0 6px; }
+  .hist-latest > div { border: 1px solid var(--card-border); border-radius: 4px; padding: 10px 12px; }
+  .hist-latest .lbl { font-size: 12.5px; color: var(--text-2); }
+  .hist-latest .val { font-size: 22px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .hist-latest .d { font-size: 12px; color: var(--muted); }
+  footer { color: var(--muted); font-size: 12.5px; margin-top: 28px; text-align: center; }
+  a { color: var(--s1); }
+  @media (max-width: 860px) { .tiles { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 640px) { .grid2, .groups { grid-template-columns: 1fr; } .tiles { grid-template-columns: repeat(2, 1fr); } .tile .val { font-size: 22px; } .hist-latest { grid-template-columns: 1fr; } header.top { flex-direction: column; } }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div>
+      <h1>Agency MBS Prepayment &amp; Convexity Model</h1>
+      <p class="sub">Fannie Mae 30-yr 5.5% pool · how refinancing drives prepayments, price and negative convexity</p>
+      <p class="asof" id="asof">Loading market data…</p>
+    </div>
+    <a class="gh" href="https://github.com/zach-obell/mbs-model">View code ↗</a>
+  </header>
+
+  <div class="tiles" id="tiles"></div>
+
+  <section class="card">
+    <div class="bar"><h2>Scenarios</h2><button id="reset">Reset</button></div>
+    <div class="groups">
+      <div>
+        <h3>Interest rates</h3>
+        <div class="controls">
+          <div class="ctl"><label>Rate shock (instant) <b id="v-shock"></b></label>
+            <input type="range" id="shock" min="-300" max="300" step="25" value="0"></div>
+          <div class="ctl"><label>Rate path (gradual) <b id="v-path"></b></label>
+            <input type="range" id="path" min="-300" max="300" step="25" value="0"></div>
+          <div class="ctl"><label>Path length <b id="v-months"></b></label>
+            <input type="range" id="months" min="6" max="60" step="6" value="24"></div>
+        </div>
+      </div>
+      <div>
+        <h3>Prepayment model</h3>
+        <div class="controls">
+          <div class="ctl"><label>S-curve midpoint <b id="v-mid"></b></label>
+            <input type="range" id="mid" min="0" max="1.5" step="0.01" value="0.72"></div>
+          <div class="ctl"><label>S-curve steepness <b id="v-k"></b></label>
+            <input type="range" id="k" min="50" max="500" step="5" value="215"></div>
+          <label class="switch"><input type="checkbox" id="prepay" checked> Prepayments on (off = no-prepay comparison bond)</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Price vs. rate shock</h2>
+      <p class="cap">MBS gains less than a regular bond as rates fall: negative convexity.</p>
+      <div class="chart" id="c-price"></div>
+    </section>
+    <section class="card">
+      <h2>Monthly cash flows</h2>
+      <p class="cap">Current scenario, $ thousands per month.</p>
+      <div class="chart" id="c-cf"></div>
+    </section>
+    <section class="card">
+      <h2>Prepayment S-curve</h2>
+      <p class="cap">Model vs. actual October 2026 FNMA speeds by coupon.</p>
+      <div class="chart" id="c-scurve"></div>
+    </section>
+    <section class="card">
+      <h2>Market rates</h2>
+      <p class="cap">Updated automatically every weekday from FRED.</p>
+      <div class="chart" id="c-hist"></div>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:18px">
+    <h2>Inputs and sources</h2>
+    <p class="cap">Live = automatic from FRED · Manual = updated when new data is published · Assumption = modeling choice</p>
+    <table id="inputs"></table>
+  </section>
+
+  <section class="card">
+    <details><summary>Methodology, assumptions and limitations</summary>
+    <h3>How the model works</h3>
+    <ol>
+      <li><b>Refinancing incentive</b> = WAC (rate homeowners pay) − current mortgage rate, month by month along the rate path.</li>
+      <li><b>Prepayment speed</b> from an S-curve: CPR = base turnover + max refi ÷ (1 + e<sup>−k × (incentive − midpoint)</sup>), converted to a monthly rate SMM = 1 − (1 − CPR)<sup>1/12</sup>.</li>
+      <li><b>Cash flows</b> for each remaining month: scheduled payment at the WAC, interest to the investor at the 5.5% coupon, scheduled principal, and prepayment = SMM × remaining balance.</li>
+      <li><b>Discounting</b> at Treasury 5/10-yr blend + MBS spread, moving with the shock and path. The sum of discounted cash flows is the price per $100.</li>
+      <li><b>Duration and convexity</b> by repricing at ±50bp and ±100bp static shocks.</li>
+    </ol>
+    <h3>Assumptions and limitations</h3>
+    <ul>
+      <li>One pool of identical average loans; real pools mix rates and ages.</li>
+      <li>The MBS spread is the latest public figure and is held constant until a newer one is published.</li>
+      <li>One rate scenario at a time: no Monte Carlo rate paths or option-adjusted spread (OAS).</li>
+      <li>No burnout, seasoning ramp, or lock-in drag: deep out-of-the-money pools (e.g. 2.0s) actually prepay below the model's turnover floor.</li>
+      <li>Mortgage rates and discount yields move one-for-one; payment delay and defaults are ignored (the agency guarantee makes defaults look like prepayments).</li>
+    </ul>
+    <p class="cap" style="margin-top:10px">The same model is built in Excel; the JavaScript version reproduces its numbers exactly.</p>
+    </details>
+  </section>
+
+  <footer>Built by Zachary O'Bell · Tulane University, A. B. Freeman School of Business · For educational purposes only; not investment advice.</footer>
+</main>
+
+<script src="model.js"></script>
+<script>
+// ---------- small SVG line-chart helper (no external libraries) ----------
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function niceTicks(min, max, n = 5) {
+  const span = max - min || 1, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => span / s <= n) || 10 * mag;
+  const ticks = []; for (let v = Math.ceil(min / step) * step; v <= max + 1e-9; v += step) ticks.push(+v.toFixed(10));
+  return { ticks, lo: Math.min(min, ticks[0]), hi: Math.max(max, ticks[ticks.length - 1]) };
+}
+function lineChart(el, o) {
+  const W = 640, H = 300, m = { l: 58, r: 30, t: 10, b: 42 };
+  const pw = W - m.l - m.r, ph = H - m.t - m.b;
+  const all = o.series.flatMap(s => s.data);
+  let xmin = o.x.min ?? Math.min(...all.map(d => d[0])), xmax = o.x.max ?? Math.max(...all.map(d => d[0]));
+  if (xmin === xmax) { xmin -= 1; xmax += 1; }
+  let ymin = o.y.min ?? Math.min(...all.map(d => d[1])), ymax = o.y.max ?? Math.max(...all.map(d => d[1]));
+  if (ymin === ymax) { ymin -= 1; ymax += 1; }
+  const pad = (ymax - ymin) * 0.06; if (o.y.min == null) ymin -= pad; if (o.y.max == null) ymax += pad;
+  const yt = niceTicks(ymin, ymax, 5); ymin = o.y.min ?? yt.lo; ymax = o.y.max ?? yt.hi;
+  const xt = o.x.ticks || niceTicks(xmin, xmax, 6).ticks.filter(v => v >= xmin && v <= xmax);
+  const X = v => m.l + (v - xmin) / (xmax - xmin) * pw, Y = v => m.t + ph - (v - ymin) / (ymax - ymin) * ph;
+  const muted = css('--muted'), grid = css('--grid'), axis = css('--axis');
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.label}" style="font-family:inherit">`;
+  yt.ticks.filter(v => v >= ymin - 1e-9 && v <= ymax + 1e-9).forEach(v => {
+    s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${grid}" stroke-width="1"/>`;
+    s += `<text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11.5" fill="${muted}">${o.y.fmt(v)}</text>`;
+  });
+  xt.forEach(v => s += `<text x="${X(v)}" y="${H - m.b + 17}" text-anchor="middle" font-size="11.5" fill="${muted}">${o.x.fmt(v)}</text>`);
+  s += `<line x1="${m.l}" x2="${W - m.r}" y1="${m.t + ph}" y2="${m.t + ph}" stroke="${axis}"/>`;
+  if (o.x.zero != null && o.x.zero > xmin && o.x.zero < xmax) s += `<line x1="${X(o.x.zero)}" x2="${X(o.x.zero)}" y1="${m.t}" y2="${m.t + ph}" stroke="${axis}" stroke-dasharray="3 3"/>`;
+  s += `<text x="${m.l + pw / 2}" y="${H - 6}" text-anchor="middle" font-size="12" fill="${muted}">${o.x.title}</text>`;
+  o.series.forEach(se => {
+    const c = css(se.color);
+    if (se.markers) se.data.forEach(d => s += `<circle cx="${X(d[0])}" cy="${Y(d[1])}" r="${se.r || 4.5}" fill="${c}" stroke="${css('--surface')}" stroke-width="2"/>`);
+    else s += `<path d="${se.data.map((d, i) => (i ? 'L' : 'M') + X(d[0]).toFixed(1) + ' ' + Y(d[1]).toFixed(1)).join('')}" fill="none" stroke="${c}" stroke-width="2" ${se.dash ? 'stroke-dasharray="6 4"' : ''} stroke-linejoin="round"/>`;
+  });
+  s += `<line class="xh" y1="${m.t}" y2="${m.t + ph}" stroke="${muted}" stroke-width="1" visibility="hidden"/>`;
+  s += `<rect x="${m.l}" y="${m.t}" width="${pw}" height="${ph}" fill="transparent"/></svg>`;
+  const legend = o.series.length > 1 ? `<div class="legend">${o.series.map(se => `<span><i class="${se.markers ? 'dot' : ''}" style="background:${css(se.color)}"></i>${se.name}</span>`).join('')}</div>` : '';
+  el.innerHTML = legend + s + '<div class="tip"></div>';
+  const svg = el.querySelector('svg'), tip = el.querySelector('.tip'), xh = svg.querySelector('.xh');
+  svg.addEventListener('mousemove', ev => {
+    const r = svg.getBoundingClientRect(), sx = (ev.clientX - r.left) / r.width * W;
+    if (sx < m.l || sx > W - m.r) { tip.style.display = 'none'; xh.setAttribute('visibility', 'hidden'); return; }
+    const xv = xmin + (sx - m.l) / pw * (xmax - xmin);
+    const ref = o.series.find(se => !se.markers) || o.series[0];
+    const near = arr => arr.reduce((a, b) => Math.abs(b[0] - xv) < Math.abs(a[0] - xv) ? b : a);
+    const px = near(ref.data)[0];
+    const rows = o.series.map(se => {
+      const d = near(se.data);
+      if (se.markers && Math.abs(X(d[0]) - sx) > 14) return '';
+      return `<div><span class="sw" style="background:${css(se.color)}"></span>${se.name}${se.markers && d[2] ? ' (' + d[2] + ')' : ''}: <b>${o.y.fmt(d[1], true)}</b></div>`;
+    }).join('');
+    xh.setAttribute('x1', X(px)); xh.setAttribute('x2', X(px)); xh.setAttribute('visibility', 'visible');
+    tip.innerHTML = `<div class="h">${o.x.tipFmt ? o.x.tipFmt(px) : o.x.fmt(px)}</div>` + rows;
+    tip.style.display = 'block';
+    const left = (X(px) / W) * r.width;
+    tip.style.left = Math.min(Math.max(left + 12, 0), r.width - tip.offsetWidth) + 'px';
+    tip.style.top = '30px';
+  });
+  svg.addEventListener('mouseleave', () => { tip.style.display = 'none'; xh.setAttribute('visibility', 'hidden'); });
+}
+
+// ---------- app ----------
+const $ = id => document.getElementById(id);
+const pct = (x, d = 2) => (x * 100).toFixed(d) + '%';
+const bp = v => (v > 0 ? '+' : '') + v + 'bp';
+let base, settings, market, history;
+
+function params() {
+  return { ...base,
+    shockBp: +$('shock').value, pathBp: +$('path').value, pathMonths: +$('months').value,
+    midpoint: +$('mid').value / 100, k: +$('k').value, prepayOn: $('prepay').checked };
+}
+
+function render() {
+  const p = params();
+  $('v-shock').textContent = bp(p.shockBp); $('v-path').textContent = bp(p.pathBp);
+  $('v-months').textContent = p.pathMonths + ' mo'; $('v-mid').textContent = (p.midpoint * 100).toFixed(2) + '%';
+  $('v-k').textContent = p.k;
+
+  const res = priceMBS(p);
+  const r50 = riskMeasures(p, 50), r100 = riskMeasures(p, 100);
+  const disc = p.treasuryBlend + p.spread + p.shockBp / 10000;
+  const tiles = [
+    ['Price (per $100)', res.price.toFixed(3), p.pathBp ? 'with rate path' : 'at ' + pct(disc) + ' yield', 'hero'],
+    ['Avg. life (WAL)', res.wal.toFixed(1) + ' yrs', 'time to get principal back'],
+    ['Prepay speed (CPR)', pct(res.cpr1, 1), 'refi incentive ' + pct(res.incentive1)],
+    ['Eff. duration', r50.duration.toFixed(2), '% price change per 1% rates'],
+    ['Eff. convexity', r100.convexity.toFixed(0), '±100bp · ' + r50.convexity.toFixed(1) + ' at ±50bp'],
+  ];
+  $('tiles').innerHTML = tiles.map(t => `<div class="tile ${t[3] || ''}"><div class="lbl">${t[0]}</div><div class="val">${t[1]}</div><div class="note">${t[2]}</div></div>`).join('');
+
+  // Price vs shock
+  const shocks = []; for (let s = -300; s <= 300; s += 25) shocks.push(s);
+  const at = (s, on) => priceMBS({ ...p, shockBp: s, pathBp: 0, prepayOn: on }).price;
+  lineChart($('c-price'), { label: 'Price versus rate shock',
+    series: [ { name: 'MBS (prepayments on)', color: '--s1', data: shocks.map(s => [s, at(s, true)]) },
+              { name: 'No-prepay bond', color: '--s2', dash: true, data: shocks.map(s => [s, at(s, false)]) },
+              { name: 'Current scenario', color: '--s1', markers: true, r: 6, data: [[p.shockBp, at(p.shockBp, true)]] } ],
+    x: { min: -300, max: 300, ticks: [-300, -200, -100, 0, 100, 200, 300], fmt: bp, title: 'Rate shock (bp)', zero: 0 },
+    y: { fmt: (v, t) => t ? v.toFixed(2) : v.toFixed(0) } });
+
+  // Cash flows
+  const rows = res.rows;
+  lineChart($('c-cf'), { label: 'Monthly cash flows',
+    series: [ { name: 'Interest', color: '--s1', data: rows.map(r => [r.t, r.interest / 1000]) },
+              { name: 'Scheduled principal', color: '--s2', data: rows.map(r => [r.t, r.schedPrin / 1000]) },
+              { name: 'Prepayments', color: '--s3', data: rows.map(r => [r.t, r.prepay / 1000]) } ],
+    x: { min: 1, max: rows.length, ticks: [1, 60, 120, 180, 240, 300], fmt: v => v === 1 ? 'Yr 0' : 'Yr ' + v / 12, tipFmt: v => 'Month ' + v + ' (year ' + (v / 12).toFixed(1) + ')', title: 'Years from today' },
+    y: { min: 0, fmt: v => '$' + v.toFixed(0) + 'k' } });
+
+  // S-curve
+  const cal = settings.calibration, inc = [];
+  for (let x = -0.045; x <= 0.0201; x += 0.0025) inc.push(+x.toFixed(4));
+  const cpr = x => p.baseCPR + (p.peakCPR - p.baseCPR) / (1 + Math.exp(-p.k * (x - p.midpoint)));
+  lineChart($('c-scurve'), { label: 'Prepayment S-curve',
+    series: [ { name: 'Model S-curve', color: '--s1', data: inc.map(x => [x, cpr(x)]) },
+              { name: 'Actual Oct 2026 (FNMA coupon)', color: '--s2', markers: true, data: cal.points.map(q => [q.wac - cal.reference_mortgage_rate, q.cpr, q.coupon]) },
+              { name: 'This pool today', color: '--s3', markers: true, r: 6, data: [[res.incentive1, p.prepayOn ? res.cpr1 : cpr(res.incentive1)]] } ],
+    x: { min: -0.045, max: 0.02, ticks: [-0.04, -0.03, -0.02, -0.01, 0, 0.01, 0.02], fmt: v => (v * 100).toFixed(0) + '%', tipFmt: v => 'Incentive ' + pct(v), title: 'Refinancing incentive (WAC − mortgage rate)', zero: 0 },
+    y: { min: 0, max: 0.35, fmt: (v, t) => (v * 100).toFixed(t ? 1 : 0) + '%' } });
+}
+
+function renderHistory() {
+  const h = history.length ? history : [{ mortgage_30y: market.mortgage_30y, treasury_5y: market.treasury_5y, treasury_10y: market.treasury_10y }];
+  if (h.length < 3) {
+    const last = h[h.length - 1], d = s => new Date(s + 'T12:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    $('c-hist').innerHTML = `<div class="hist-latest">
+      <div><div class="lbl">30-yr mortgage</div><div class="val">${last.mortgage_30y.value.toFixed(2)}%</div><div class="d">${d(last.mortgage_30y.date)}</div></div>
+      <div><div class="lbl">10-yr Treasury</div><div class="val">${last.treasury_10y.value.toFixed(2)}%</div><div class="d">${d(last.treasury_10y.date)}</div></div>
+      <div><div class="lbl">5-yr Treasury</div><div class="val">${last.treasury_5y.value.toFixed(2)}%</div><div class="d">${d(last.treasury_5y.date)}</div></div></div>
+      <p class="cap" style="margin:8px 0 0">A history chart appears here once a few weekday updates have accumulated.</p>`;
+    return;
+  }
+  const xs = h.map((r, i) => i);
+  const lbl = i => h[Math.round(i)] ? h[Math.round(i)].treasury_10y.date.slice(5) : '';
+  const ticks = h.length <= 7 ? xs : xs.filter(i => i % Math.ceil(h.length / 6) === 0);
+  lineChart($('c-hist'), { label: 'Rates history',
+    series: [ { name: '30-yr mortgage', color: '--s1', data: h.map((r, i) => [i, r.mortgage_30y.value]) },
+              { name: '10-yr Treasury', color: '--s2', data: h.map((r, i) => [i, r.treasury_10y.value]) },
+              { name: '5-yr Treasury', color: '--s3', data: h.map((r, i) => [i, r.treasury_5y.value]) } ],
+    x: { min: 0, max: h.length - 1, ticks, fmt: lbl, tipFmt: i => h[Math.round(i)].treasury_10y.date, title: 'Update date (MM-DD)' },
+    y: { fmt: (v, t) => v.toFixed(t ? 2 : 1) + '%' } });
+}
+
+function renderInputs() {
+  const fd = x => new Date(x + 'T12:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const s = settings, mk = market;
+  const SAN = 'Santander US Capital Markets prepay report', mo = 'Oct 2026';
+  const rows = [
+    ['30-yr mortgage rate', pct(base.mortgageRate), fd(mk.mortgage_30y.date), 'Freddie Mac PMMS via FRED', 'Live'],
+    ['5-yr Treasury', pct(mk.treasury_5y.value / 100), fd(mk.treasury_5y.date), 'U.S. Treasury via FRED', 'Live'],
+    ['10-yr Treasury', pct(mk.treasury_10y.value / 100), fd(mk.treasury_10y.date), 'U.S. Treasury via FRED', 'Live'],
+    ['MBS spread (vs. 5/10-yr blend)', pct(s.spread.value), fd(s.spread.as_of), 'Morgan Stanley IM MBS Monitor (held constant)', 'Manual'],
+    ['Pass-through coupon', pct(s.pool.coupon), '—', 'Current-production UMBS coupon', 'Manual'],
+    ['WAC', pct(s.pool.wac, 3), mo, SAN + ' (FNMA 5.5s)', 'Manual'],
+    ['Loan age (WALA)', s.pool.wala + ' months', mo, SAN + ' (FNMA 5.5s)', 'Manual'],
+    ['Base CPR (turnover)', pct(s.prepay.base_cpr, 1), mo, SAN + ' (FNMA 5.0s)', 'Manual'],
+    ['Peak CPR', pct(s.prepay.peak_cpr, 1), 'Dec 2025', SAN + ' (FNCL 6.5s)', 'Manual'],
+    ['S-curve midpoint / steepness', pct(s.prepay.midpoint) + ' / ' + s.prepay.steepness, mo, 'Fit to FNMA speeds by coupon', 'Assumption'],
+    ['Pool balance', '$100M', '—', 'Round number for readability', 'Assumption'],
+  ];
+  $('inputs').innerHTML = '<tr><th>Input</th><th style="text-align:right">Value</th><th>As of</th><th>Source</th><th>Type</th></tr>' +
+    rows.map(r => `<tr><td>${r[0]}</td><td class="num">${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="tag">${r[4]}</span></td></tr>`).join('');
+}
+
+(async () => {
+  const get = f => fetch(f, { cache: 'no-store' }).then(r => { if (!r.ok) throw new Error(f + ' ' + r.status); return r.json(); });
+  [market, settings] = await Promise.all([get('data/market.json'), get('data/settings.json')]);
+  history = await get('data/history.json').catch(() => []);
+  base = {
+    balance: settings.pool.balance, coupon: settings.pool.coupon, wac: settings.pool.wac,
+    originalTerm: settings.pool.original_term, wala: settings.pool.wala,
+    mortgageRate: market.mortgage_30y.value / 100,
+    treasuryBlend: (market.treasury_5y.value + market.treasury_10y.value) / 200,
+    spread: settings.spread.value, baseCPR: settings.prepay.base_cpr, peakCPR: settings.prepay.peak_cpr,
+    midpoint: settings.prepay.midpoint, k: settings.prepay.steepness
+  };
+  $('mid').value = (base.midpoint * 100).toFixed(2); $('k').value = base.k;
+  const fetched = new Date(market.fetched_at);
+  const fd = x => new Date(x + 'T12:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  $('asof').textContent = `Mortgage rate as of ${fd(market.mortgage_30y.date)} · Treasuries as of ${fd(market.treasury_10y.date)} · last checked ${fetched.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+  ['shock', 'path', 'months', 'mid', 'k', 'prepay'].forEach(id => $(id).addEventListener('input', render));
+  $('reset').addEventListener('click', () => {
+    $('shock').value = 0; $('path').value = 0; $('months').value = 24;
+    $('mid').value = (base.midpoint * 100).toFixed(2); $('k').value = base.k; $('prepay').checked = true; render();
+  });
+  render(); renderHistory(); renderInputs();
+})().catch(e => { $('asof').textContent = 'Could not load data: ' + e.message; });
+</script>
+</body>
+</html>
