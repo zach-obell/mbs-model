@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MBS model — test</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; }
+  table { border-collapse: collapse; width: 100%; }
+  td { padding: 6px 8px; border-bottom: 1px solid #ddd; }
+  td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  .note { color: #666; font-size: 13px; }
+</style>
+</head>
+<body>
+<h1>MBS model — test page</h1>
+<p class="note">Temporary page to check the JavaScript model against the Excel file. Expected at Nov 19–20 data: price 96.338, WAL 9.72, CPR 6.59%, duration 6.80.</p>
+<table id="out"><tr><td>Loading…</td></tr></table>
+<script src="model.js"></script>
+<script>
+(async () => {
+  const [market, settings] = await Promise.all([
+    fetch("data/market.json").then(r => r.json()),
+    fetch("data/settings.json").then(r => r.json())
+  ]);
+  const p = {
+    balance: settings.pool.balance,
+    coupon: settings.pool.coupon,
+    wac: settings.pool.wac,
+    originalTerm: settings.pool.original_term,
+    wala: settings.pool.wala,
+    mortgageRate: market.mortgage_30y.value / 100,          // FRED gives percent
+    treasuryBlend: (market.treasury_5y.value + market.treasury_10y.value) / 200,
+    spread: settings.spread.value,
+    baseCPR: settings.prepay.base_cpr,
+    peakCPR: settings.prepay.peak_cpr,
+    midpoint: settings.prepay.midpoint,
+    k: settings.prepay.steepness,
+    shockBp: 0, pathBp: 0, pathMonths: 24, prepayOn: true
+  };
+  const res = priceMBS(p);
+  const r50 = riskMeasures(p, 50), r100 = riskMeasures(p, 100);
+  const pct = x => (x * 100).toFixed(2) + "%";
+  const rows = [
+    ["Mortgage rate (" + market.mortgage_30y.date + ")", pct(p.mortgageRate)],
+    ["5/10-yr Treasury blend (" + market.treasury_10y.date + ")", pct(p.treasuryBlend)],
+    ["Discount yield", pct(p.treasuryBlend + p.spread)],
+    ["Refi incentive", pct(res.incentive1)],
+    ["CPR", pct(res.cpr1)],
+    ["Price (per $100)", res.price.toFixed(3)],
+    ["WAL (yrs)", res.wal.toFixed(2)],
+    ["Effective duration (±50bp)", r50.duration.toFixed(2)],
+    ["Effective convexity (±50bp)", r50.convexity.toFixed(1)],
+    ["Effective convexity (±100bp)", r100.convexity.toFixed(1)]
+  ];
+  document.getElementById("out").innerHTML =
+    rows.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("");
+})().catch(e => {
+  document.getElementById("out").innerHTML = `<tr><td>Error: ${e.message}</td></tr>`;
+});
+</script>
+</body>
+</html>
