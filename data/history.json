@@ -1,5 +1,516 @@
 [
   {
+    "date": "2026-10-01",
+    "mortgage_30y": {
+      "value": 7.28,
+      "date": "2026-10-01"
+    },
+    "treasury_5y": {
+      "value": 5.01,
+      "date": "2026-10-01"
+    },
+    "treasury_10y": {
+      "value": 5.24,
+      "date": "2026-10-01"
+    }
+  },
+  {
+    "date": "2026-10-02",
+    "mortgage_30y": {
+      "value": 7.28,
+      "date": "2026-10-01"
+    },
+    "treasury_5y": {
+      "value": 5.06,
+      "date": "2026-10-02"
+    },
+    "treasury_10y": {
+      "value": 5.28,
+      "date": "2026-10-02"
+    }
+  },
+  {
+    "date": "2026-10-05",
+    "mortgage_30y": {
+      "value": 7.28,
+      "date": "2026-10-01"
+    },
+    "treasury_5y": {
+      "value": 5.06,
+      "date": "2026-10-05"
+    },
+    "treasury_10y": {
+      "value": 5.31,
+      "date": "2026-10-05"
+    }
+  },
+  {
+    "date": "2026-10-06",
+    "mortgage_30y": {
+      "value": 7.28,
+      "date": "2026-10-01"
+    },
+    "treasury_5y": {
+      "value": 5.03,
+      "date": "2026-10-06"
+    },
+    "treasury_10y": {
+      "value": 5.27,
+      "date": "2026-10-06"
+    }
+  },
+  {
+    "date": "2026-10-07",
+    "mortgage_30y": {
+      "value": 7.28,
+      "date": "2026-10-01"
+    },
+    "treasury_5y": {
+      "value": 5.03,
+      "date": "2026-10-07"
+    },
+    "treasury_10y": {
+      "value": 5.28,
+      "date": "2026-10-07"
+    }
+  },
+  {
+    "date": "2026-10-08",
+    "mortgage_30y": {
+      "value": 7.4,
+      "date": "2026-10-08"
+    },
+    "treasury_5y": {
+      "value": 4.99,
+      "date": "2026-10-08"
+    },
+    "treasury_10y": {
+      "value": 5.22,
+      "date": "2026-10-08"
+    }
+  },
+  {
+    "date": "2026-10-09",
+    "mortgage_30y": {
+      "value": 7.4,
+      "date": "2026-10-08"
+    },
+    "treasury_5y": {
+      "value": 5.02,
+      "date": "2026-10-09"
+    },
+    "treasury_10y": {
+      "value": 5.24,
+      "date": "2026-10-09"
+    }
+  },
+  {
+    "date": "2026-10-13",
+    "mortgage_30y": {
+      "value": 7.4,
+      "date": "2026-10-08"
+    },
+    "treasury_5y": {
+      "value": 5.0,
+      "date": "2026-10-13"
+    },
+    "treasury_10y": {
+      "value": 5.21,
+      "date": "2026-10-13"
+    }
+  },
+  {
+    "date": "2026-10-14",
+    "mortgage_30y": {
+      "value": 7.4,
+      "date": "2026-10-08"
+    },
+    "treasury_5y": {
+      "value": 5.0,
+      "date": "2026-10-14"
+    },
+    "treasury_10y": {
+      "value": 5.19,
+      "date": "2026-10-14"
+    }
+  },
+  {
+    "date": "2026-10-15",
+    "mortgage_30y": {
+      "value": 7.4,
+      "date": "2026-10-15"
+    },
+    "treasury_5y": {
+      "value": 4.91,
+      "date": "2026-10-15"
+    },
+    "treasury_10y": {
+      "value": 5.1,
+      "date": "2026-10-15"
+    }
+  },
+  {
+    "date": "2026-10-16",
+    "mortgage_30y": {
+      "value": 7.4,
+      "date": "2026-10-15"
+    },
+    "treasury_5y": {
+      "value": 4.89,
+      "date": "2026-10-16"
+    },
+    "treasury_10y": {
+      "value": 5.09,
+      "date": "2026-10-16"
+    }
+  },
+  {
+    "date": "2026-10-19",
+    "mortgage_30y": {
+      "value": 7.4,
+      "date": "2026-10-15"
+    },
+    "treasury_5y": {
+      "value": 4.94,
+      "date": "2026-10-19"
+    },
+    "treasury_10y": {
+      "value": 5.15,
+      "date": "2026-10-19"
+    }
+  },
+  {
+    "date": "2026-10-20",
+    "mortgage_30y": {
+      "value": 7.4,
+      "date": "2026-10-15"
+    },
+    "treasury_5y": {
+      "value": 4.94,
+      "date": "2026-10-20"
+    },
+    "treasury_10y": {
+      "value": 5.12,
+      "date": "2026-10-20"
+    }
+  },
+  {
+    "date": "2026-10-21",
+    "mortgage_30y": {
+      "value": 7.4,
+      "date": "2026-10-15"
+    },
+    "treasury_5y": {
+      "value": 4.95,
+      "date": "2026-10-21"
+    },
+    "treasury_10y": {
+      "value": 5.13,
+      "date": "2026-10-21"
+    }
+  },
+  {
+    "date": "2026-10-22",
+    "mortgage_30y": {
+      "value": 7.32,
+      "date": "2026-10-22"
+    },
+    "treasury_5y": {
+      "value": 4.78,
+      "date": "2026-10-22"
+    },
+    "treasury_10y": {
+      "value": 4.96,
+      "date": "2026-10-22"
+    }
+  },
+  {
+    "date": "2026-10-23",
+    "mortgage_30y": {
+      "value": 7.32,
+      "date": "2026-10-22"
+    },
+    "treasury_5y": {
+      "value": 4.82,
+      "date": "2026-10-23"
+    },
+    "treasury_10y": {
+      "value": 5.0,
+      "date": "2026-10-23"
+    }
+  },
+  {
+    "date": "2026-10-26",
+    "mortgage_30y": {
+      "value": 7.32,
+      "date": "2026-10-22"
+    },
+    "treasury_5y": {
+      "value": 4.84,
+      "date": "2026-10-26"
+    },
+    "treasury_10y": {
+      "value": 5.0,
+      "date": "2026-10-26"
+    }
+  },
+  {
+    "date": "2026-10-27",
+    "mortgage_30y": {
+      "value": 7.32,
+      "date": "2026-10-22"
+    },
+    "treasury_5y": {
+      "value": 4.82,
+      "date": "2026-10-27"
+    },
+    "treasury_10y": {
+      "value": 4.99,
+      "date": "2026-10-27"
+    }
+  },
+  {
+    "date": "2026-10-28",
+    "mortgage_30y": {
+      "value": 7.32,
+      "date": "2026-10-22"
+    },
+    "treasury_5y": {
+      "value": 4.85,
+      "date": "2026-10-28"
+    },
+    "treasury_10y": {
+      "value": 5.05,
+      "date": "2026-10-28"
+    }
+  },
+  {
+    "date": "2026-10-29",
+    "mortgage_30y": {
+      "value": 7.24,
+      "date": "2026-10-29"
+    },
+    "treasury_5y": {
+      "value": 4.78,
+      "date": "2026-10-29"
+    },
+    "treasury_10y": {
+      "value": 4.98,
+      "date": "2026-10-29"
+    }
+  },
+  {
+    "date": "2026-10-30",
+    "mortgage_30y": {
+      "value": 7.24,
+      "date": "2026-10-29"
+    },
+    "treasury_5y": {
+      "value": 4.71,
+      "date": "2026-10-30"
+    },
+    "treasury_10y": {
+      "value": 4.94,
+      "date": "2026-10-30"
+    }
+  },
+  {
+    "date": "2026-11-02",
+    "mortgage_30y": {
+      "value": 7.24,
+      "date": "2026-10-29"
+    },
+    "treasury_5y": {
+      "value": 4.7,
+      "date": "2026-11-02"
+    },
+    "treasury_10y": {
+      "value": 4.91,
+      "date": "2026-11-02"
+    }
+  },
+  {
+    "date": "2026-11-03",
+    "mortgage_30y": {
+      "value": 7.24,
+      "date": "2026-10-29"
+    },
+    "treasury_5y": {
+      "value": 4.74,
+      "date": "2026-11-03"
+    },
+    "treasury_10y": {
+      "value": 4.95,
+      "date": "2026-11-03"
+    }
+  },
+  {
+    "date": "2026-11-04",
+    "mortgage_30y": {
+      "value": 7.24,
+      "date": "2026-10-29"
+    },
+    "treasury_5y": {
+      "value": 4.69,
+      "date": "2026-11-04"
+    },
+    "treasury_10y": {
+      "value": 4.9,
+      "date": "2026-11-04"
+    }
+  },
+  {
+    "date": "2026-11-05",
+    "mortgage_30y": {
+      "value": 7.18,
+      "date": "2026-11-05"
+    },
+    "treasury_5y": {
+      "value": 4.59,
+      "date": "2026-11-05"
+    },
+    "treasury_10y": {
+      "value": 4.84,
+      "date": "2026-11-05"
+    }
+  },
+  {
+    "date": "2026-11-06",
+    "mortgage_30y": {
+      "value": 7.18,
+      "date": "2026-11-05"
+    },
+    "treasury_5y": {
+      "value": 4.64,
+      "date": "2026-11-06"
+    },
+    "treasury_10y": {
+      "value": 4.86,
+      "date": "2026-11-06"
+    }
+  },
+  {
+    "date": "2026-11-09",
+    "mortgage_30y": {
+      "value": 7.18,
+      "date": "2026-11-05"
+    },
+    "treasury_5y": {
+      "value": 4.67,
+      "date": "2026-11-09"
+    },
+    "treasury_10y": {
+      "value": 4.88,
+      "date": "2026-11-09"
+    }
+  },
+  {
+    "date": "2026-11-10",
+    "mortgage_30y": {
+      "value": 7.18,
+      "date": "2026-11-05"
+    },
+    "treasury_5y": {
+      "value": 4.81,
+      "date": "2026-11-10"
+    },
+    "treasury_10y": {
+      "value": 4.98,
+      "date": "2026-11-10"
+    }
+  },
+  {
+    "date": "2026-11-12",
+    "mortgage_30y": {
+      "value": 7.11,
+      "date": "2026-11-12"
+    },
+    "treasury_5y": {
+      "value": 4.95,
+      "date": "2026-11-12"
+    },
+    "treasury_10y": {
+      "value": 5.1,
+      "date": "2026-11-12"
+    }
+  },
+  {
+    "date": "2026-11-13",
+    "mortgage_30y": {
+      "value": 7.11,
+      "date": "2026-11-12"
+    },
+    "treasury_5y": {
+      "value": 4.98,
+      "date": "2026-11-13"
+    },
+    "treasury_10y": {
+      "value": 5.15,
+      "date": "2026-11-13"
+    }
+  },
+  {
+    "date": "2026-11-16",
+    "mortgage_30y": {
+      "value": 7.11,
+      "date": "2026-11-12"
+    },
+    "treasury_5y": {
+      "value": 4.93,
+      "date": "2026-11-16"
+    },
+    "treasury_10y": {
+      "value": 5.12,
+      "date": "2026-11-16"
+    }
+  },
+  {
+    "date": "2026-11-17",
+    "mortgage_30y": {
+      "value": 7.11,
+      "date": "2026-11-12"
+    },
+    "treasury_5y": {
+      "value": 4.9,
+      "date": "2026-11-17"
+    },
+    "treasury_10y": {
+      "value": 5.1,
+      "date": "2026-11-17"
+    }
+  },
+  {
+    "date": "2026-11-18",
+    "mortgage_30y": {
+      "value": 7.11,
+      "date": "2026-11-12"
+    },
+    "treasury_5y": {
+      "value": 4.89,
+      "date": "2026-11-18"
+    },
+    "treasury_10y": {
+      "value": 5.07,
+      "date": "2026-11-18"
+    }
+  },
+  {
+    "date": "2026-11-19",
+    "mortgage_30y": {
+      "value": 7.28,
+      "date": "2026-11-19"
+    },
+    "treasury_5y": {
+      "value": 4.86,
+      "date": "2026-11-19"
+    },
+    "treasury_10y": {
+      "value": 5.04,
+      "date": "2026-11-19"
+    }
+  },
+  {
+    "date": "2026-11-20",
     "mortgage_30y": {
       "value": 7.28,
       "date": "2026-11-19"
