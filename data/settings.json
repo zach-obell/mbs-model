@@ -1,0 +1,24 @@
+{
+  "_note": "Manual inputs: no free daily feed. Update by hand and change the as_of dates.",
+  "pool": {
+    "balance": 100000000,
+    "coupon": 0.055,
+    "wac": 0.06443,
+    "original_term": 360,
+    "wala": 26,
+    "as_of": "Oct 2026 factor month",
+    "source": "Santander US Capital Markets prepayment report, Nov 2026 (FNMA 30-yr 5.5s)"
+  },
+  "spread": {
+    "value": 0.0125,
+    "as_of": "2026-09-30",
+    "source": "Morgan Stanley IM Agency MBS Monitor Q3 2026 (assumed unchanged)"
+  },
+  "prepay": {
+    "base_cpr": 0.057,
+    "peak_cpr": 0.32,
+    "midpoint": 0.0072,
+    "steepness": 215,
+    "source": "Base: FNMA 5.0s Oct 2026 CPR; peak: FNCL 6.5s Dec 2025; midpoint/steepness fit to Oct 2026 speeds"
+  }
+}
